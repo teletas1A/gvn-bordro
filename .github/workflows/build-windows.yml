@@ -1,0 +1,27 @@
+name: Windows EXE Olustur
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bagimliliklari kur
+        run: pip install -r requirements.txt
+      - name: Uygulama simgesini olustur
+        run: python assets/create_icon.py
+      - name: EXE olustur
+        run: pyinstaller --noconfirm --clean --windowed --onefile --name "GVN Bordro" --icon assets/gvn_bordro.ico app.py
+      - name: EXE dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVN-Bordro-Windows
+          path: dist/GVN Bordro.exe
+          if-no-files-found: error
